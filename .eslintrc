@@ -1,10 +1,15 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "root": true,
+  "extends": [
+    "plugin:vue/vue3-essential",
+    "eslint:recommended",
+    "@vue/eslint-config-typescript",
+    "@vue/eslint-config-prettier"
+  ],
   "rules": {
-    "prettier/prettier": "error"
-  }
+    "prefer-const": "warn",
+    "vue/multi-word-component-names": "warn",
+    "@typescript-eslint/no-unused-vars": "warn"
+  },
+  "parserOptions": { "ecmaVersion": "latest", "sourceType": "module" }
 }

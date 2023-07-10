@@ -1,11 +1,19 @@
 <template>
-  <div class="flex w-full mx-auto max-w-[800px] justify-center items-center flex-col">
-    <Line :data="chartData" :options="chartOptions" />
+  <div class="flex w-full flex-col">
+    <div class="flex items-center gap-3">
+      <h1 class=" font-semibold">Prefecture</h1>
+      <div class="flex items-center">
+        <input type="checkbox" name="" id="" />
+        <span></span>
+      </div>
+    </div>
+    <div class="flex w-full mx-auto max-w-[800px] justify-center items-center flex-col">
+      <Line :data="chartData" :options="chartOptions" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChartData } from 'chart.js';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -53,7 +61,7 @@ const chartOptions: any = {
         callback: function (value: any) {
           return value / 1000000 + 'M';
         },
-        stepSize: 500000,
+        // stepSize: 500000,
       },
     },
   },
