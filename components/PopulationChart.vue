@@ -1,14 +1,19 @@
 <template>
   <div class="flex w-full flex-col">
-    <div class="flex items-center gap-3">
-      <h1 class=" font-semibold">Prefecture</h1>
-      <div class="flex items-center">
+    <div class="flex gap-3 items-center justify-center">
+      <h1 class="font-semibold">Prefecture</h1>
+      <div class="flex items-center gap-x-2">
         <input type="checkbox" name="" id="" />
-        <span></span>
+        <span>Tokyo</span>
+      </div>
+      <div class="flex items-center gap-x-2">
+        <input type="checkbox" name="" id="" />
+        <span>Kanagawa</span>
       </div>
     </div>
     <div class="flex w-full mx-auto max-w-[800px] justify-center items-center flex-col">
-      <Line :data="chartData" :options="chartOptions" />
+      <Line v-if="!loading" :data="chartData" :options="chartOptions" />
+      <div v-else class="text-center">loading data...</div>
     </div>
   </div>
 </template>
@@ -31,10 +36,8 @@ const runtimeConfig = useRuntimeConfig();
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const chartData: any = useState('chartData', () => ({
-  labels: ['January', 'February', 'March'],
-  datasets: [{ data: [40, 20, 12] }],
-}));
+const chartData: any = useState('chartData', () => ({}));
+const loading: any = useState('loading', () => true);
 
 const chartOptions: any = {
   responsive: true,
@@ -70,6 +73,7 @@ const chartOptions: any = {
 // fetch data from API RESAS and set to chartData
 
 const fetchData = async () => {
+  loading.value = true;
   const res = await fetch(
     'https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=1',
     {
@@ -114,6 +118,7 @@ const fetchData = async () => {
   };
   console.log('fetchedData', fetchedData);
   chartData.value = fetchedData;
+  loading.value = false;
 };
 
 onMounted(() => {

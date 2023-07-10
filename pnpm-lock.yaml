@@ -37,12 +37,6 @@ devDependencies:
   eslint:
     specifier: ^8.44.0
     version: 8.44.0
-  eslint-config-prettier:
-    specifier: ^8.8.0
-    version: 8.8.0(eslint@8.44.0)
-  eslint-plugin-prettier:
-    specifier: 5.0.0-alpha.2
-    version: 5.0.0-alpha.2(eslint-config-prettier@8.8.0)(eslint@8.44.0)(prettier@3.0.0)
   eslint-plugin-vue:
     specifier: ^9.15.1
     version: 9.15.1(eslint@8.44.0)
@@ -1279,18 +1273,6 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
-
-  /@pkgr/utils@2.4.2:
-    resolution: {integrity: sha512-POgTXhjrTfbTV63DiFXav4lBHiICLKKwDeaKn9Nphwj7WH6m0hMMCaJkMyRWjgtPFyRKRVoMXXjczsTQRDEhYw==}
-    engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
-    dependencies:
-      cross-spawn: 7.0.3
-      fast-glob: 3.3.0
-      is-glob: 4.0.3
-      open: 9.1.0
-      picocolors: 1.0.0
-      tslib: 2.6.0
-    dev: true
 
   /@polka/url@1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
@@ -3153,27 +3135,6 @@ packages:
       eslint-config-prettier: 8.8.0(eslint@8.44.0)
       prettier: 3.0.0
       prettier-linter-helpers: 1.0.0
-    dev: true
-
-  /eslint-plugin-prettier@5.0.0-alpha.2(eslint-config-prettier@8.8.0)(eslint@8.44.0)(prettier@3.0.0):
-    resolution: {integrity: sha512-F6YBCbrRzvZwcINw3crm1+/uX/i+rJYaFErPtwCfUoPLywRfY7pwBtI3yMe5OpIotuaiws8cd29oM80ca6NQSQ==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      '@types/eslint': '>=8.0.0'
-      eslint: '>=8.0.0'
-      eslint-config-prettier: '*'
-      prettier: '>=3.0.0'
-    peerDependenciesMeta:
-      '@types/eslint':
-        optional: true
-      eslint-config-prettier:
-        optional: true
-    dependencies:
-      eslint: 8.44.0
-      eslint-config-prettier: 8.8.0(eslint@8.44.0)
-      prettier: 3.0.0
-      prettier-linter-helpers: 1.0.0
-      synckit: 0.8.5
     dev: true
 
   /eslint-plugin-vue@9.15.1(eslint@8.44.0):
@@ -6463,14 +6424,6 @@ packages:
       css-tree: 2.3.1
       csso: 5.0.5
       picocolors: 1.0.0
-    dev: true
-
-  /synckit@0.8.5:
-    resolution: {integrity: sha512-L1dapNV6vu2s/4Sputv8xGsCdAVlb5nRDMFU/E27D44l5U6cw1g0dGd45uLc+OXjNMmF4ntiMdCimzcjFKQI8Q==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    dependencies:
-      '@pkgr/utils': 2.4.2
-      tslib: 2.6.0
     dev: true
 
   /tailwindcss@3.3.2:
