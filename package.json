@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint --ext .ts,.vue --ignore-path .gitignore .",
     "format": "prettier --write --ignore-path .gitignore \"**/*.{js,ts,vue,json,md}\"",
-    "lint:fix": "eslint --ext .ts,.vue --ignore-path .gitignore . --fix"
+    "lint:fix": "eslint --ext .ts,.vue --ignore-path .gitignore . --fix",
+    "test": "jest"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -18,13 +19,10 @@
     "@typescript-eslint/parser": "^5.61.0",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
-    "autoprefixer": "^10.4.14",
     "eslint": "^8.44.0",
     "eslint-plugin-vue": "^9.15.1",
     "nuxt": "^3.6.2",
-    "postcss": "^8.4.25",
-    "prettier": "^3.0.0",
-    "tailwindcss": "^3.3.2"
+    "prettier": "^3.0.0"
   },
   "dependencies": {
     "chart.js": "^4.3.0",
