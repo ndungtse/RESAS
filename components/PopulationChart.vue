@@ -13,7 +13,7 @@
       <div class="headerDiv">
         <h5 class="heading">Age Group:</h5>
         <div v-for="lette in ['A', 'B', 'C', 'D']" :key="lette" class="checkbox-wrapper">
-          <input type="radio" name="ageGroup" id="" :value="lette" @click="changeChartData"
+          <input type="radio" class="checkbox" name="ageGroup" id="" :value="lette" @click="changeChartData"
             :checked="agelabel === lette" />
           <span>{{ lette }}</span>
         </div>
