@@ -3,10 +3,10 @@
     <div class="header">
       <div class="headerDiv">
         <h5 class="heading">Prefecture:</h5>
-        <div v-for="pref in ['Hokkaido', 'Aomori']" :key="pref" class="checkbox-wrapper">
-          <input type="checkbox" name="" id="" :value="pref" @click="addOrRemovePrefecture"
-            :checked="prefectures.includes(pref)" />
-          <span>{{ pref }}</span>
+        <div v-for="pref in availablePrefs.slice(0, 2)" :key="pref.prefCode" class="checkbox-wrapper">
+          <input type="checkbox" name="" id="" :value="pref.prefName" @click="addOrRemovePrefecture"
+            :checked="prefectures.includes(pref.prefName)" />
+          <span>{{ pref.prefName }}</span>
         </div>
 
       </div>
@@ -50,7 +50,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { ApiResponse } from 'utils/types';
+import { ApiResponse, Prefecture } from 'utils/types';
 import { Line } from 'vue-chartjs';
 
 const runtimeConfig = useRuntimeConfig();
@@ -60,10 +60,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const chartData: any = useState('chartData', () => ({}));
 const loading: any = useState('loading', () => true);
 const showGraph: any = useState('showGraph', () => true);
-// agelabels A:総人口 B:年少人口 C:生産年齢人口 D:老年人口
 const agelabel = useState('agelabel', () => 'A');
-const prefectures = useState('prefecture', () => ['Hokkaido']);
+const prefectures: globalThis.Ref<Prefecture['prefName'][]> = useState('prefecture', () => []);
 const borderColor = useState('borderColor', () => ['#00fc00', '#00f']);
+const availablePrefs: globalThis.Ref<Prefecture[]> = useState('availablePrefs', () => []);
 const allData: globalThis.Ref<[ApiResponse, ApiResponse] | null> = useState('allData', () => (null));
 
 const chartOptions: any = {
@@ -101,11 +101,10 @@ const chartOptions: any = {
 };
 
 // fetch data from API RESAS and set to chartData
-
-const fetchData = async () => {
+const fetchData = async (pref1: Prefecture, pref2: Prefecture) => {
   loading.value = true;
   const res = await fetch(
-    'https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=1',
+    `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${pref1.prefCode}`,
     {
       headers: {
         'X-API-KEY': runtimeConfig.public.API_KEY,
@@ -113,7 +112,7 @@ const fetchData = async () => {
     },
   ).then(res => res.json());
   const res1 = await fetch(
-    'https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=2',
+    `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${pref2.prefCode}`,
     {
       headers: {
         'X-API-KEY': runtimeConfig.public.API_KEY,
@@ -127,7 +126,7 @@ const fetchData = async () => {
     labels: data.result.data[0].data.map(d => d.year),
     datasets: [
       {
-        label: 'Hokkaido',
+        label: availablePrefs.value[0].prefName,
         data: data.result.data[0].data.map(d => d.value),
         borderColor: '#00fc00',
         fill: false,
@@ -139,10 +138,28 @@ const fetchData = async () => {
   chartData.value = fetchedData;
   loading.value = false;
 };
-
+const fetchPrefectures = async () => {
+  const res = await fetch('https://opendata.resas-portal.go.jp/api/v1/prefectures', {
+    headers: {
+      'X-API-KEY': runtimeConfig.public.API_KEY,
+    },
+  }).then(res => res.json());
+  availablePrefs.value = res.result.map((pref: any) => pref);
+};
+// fetch prefectures data from API RESAS and set to availablePrefs
 onMounted(() => {
-  fetchData();
+  fetchPrefectures();
 });
+
+// watch availablePrefectures 
+watch(availablePrefs, () => {
+  if (availablePrefs.value.length > 0) {
+    fetchData(availablePrefs.value[0], availablePrefs.value[1]);
+    prefectures.value = [availablePrefs.value[0].prefName];
+  }
+});
+
+
 // change chart data when checkbox is clicked for age label from allData if it is not empty
 const changeChartData = (e: any) => {
   console.log('e', e.target.value);
@@ -163,8 +180,6 @@ const changeChartData = (e: any) => {
   };
   if (!allData.value) return
   if (prefectures.value.length === 0) return
-  console.log('prefectures', prefectures.value);
-
   let datasets: any = [];
   for (let i = 0; i < prefectures.value.length; i++) {
     datasets.push({
@@ -184,17 +199,13 @@ const changeChartData = (e: any) => {
 };
 
 const getPrefIndex = (pref: string) => {
-  if (pref === 'Hokkaido') return 0;
-  if (pref === 'Aomori') return 1;
-  return 0;
-}
+  return availablePrefs.value.findIndex(p => p.prefName === pref);
+};
 
-// // log chartData when it is changed
-// watch(chartData, () => {
-//   console.log('new chartData', chartData.value);
-// });
 // change chart data when select is changed for prefectures from allData if it is not empty, show 2 prefectures  or 1 prefecture
 watch(prefectures, () => {
+  console.log('prefectures', prefectures.value);
+
   if (!allData.value) return
   const labelIndex = () => {
     switch (agelabel.value) {

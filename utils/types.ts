@@ -18,3 +18,8 @@ export interface Daum2 {
   value: number;
   rate?: number;
 }
+
+export interface Prefecture {
+  prefCode: number;
+  prefName: string;
+}
