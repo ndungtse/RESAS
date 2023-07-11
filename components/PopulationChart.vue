@@ -12,9 +12,11 @@
         <span>{{ lette }}</span>
       </div>
     </div>
-    <div class="chart-wrapper">
-      <Line v-if="!loading" :data="chartData" :options="chartOptions" />
-      <div v-else class="loading-text">loading data...</div>
+    <div class="chart-container">
+      <div class="chart-wrapper">
+        <Line v-if="!loading" :data="chartData" :options="chartOptions" />
+        <div v-else class="loading-text">loading data...</div>
+      </div>
     </div>
   </div>
 </template>
@@ -256,10 +258,21 @@ const addOrRemovePrefecture = (e: any) => {
   gap: 0.5rem;
 }
 
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  overflow-x: auto;
+  width: 100%;
+}
+
 .chart-wrapper {
   display: flex;
   width: 100%;
   max-width: 800px;
+  min-width: 500px;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
