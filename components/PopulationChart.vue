@@ -218,7 +218,7 @@ watch(prefectures, () => {
       labels: allData.value[index].result.data[labelIndex()].data.map(d => d.year),
       datasets: [
         {
-          label: prefectures.value[index],
+          label: prefectures.value[0],
           data: allData.value[index].result.data[labelIndex()].data.map(d => d.value),
           borderColor: borderColor.value[index],
           fill: false,
