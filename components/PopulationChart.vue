@@ -1,21 +1,37 @@
 <template>
   <div class="container">
     <div class="header">
-      <h5 class="heading">Prefecture:</h5>
-      <div v-for="pref in ['Hokkaido', 'Aomori']" :key="pref" class="checkbox-wrapper">
-        <input type="checkbox" name="" id="" :value="pref" @click="addOrRemovePrefecture"
-          :checked="prefectures.includes(pref)" />
-        <span>{{ pref }}</span>
+      <div class="headerDiv">
+        <h5 class="heading">Prefecture:</h5>
+        <div v-for="pref in ['Hokkaido', 'Aomori']" :key="pref" class="checkbox-wrapper">
+          <input type="checkbox" name="" id="" :value="pref" @click="addOrRemovePrefecture"
+            :checked="prefectures.includes(pref)" />
+          <span>{{ pref }}</span>
+        </div>
+
       </div>
-      <div v-for="lette in ['A', 'B', 'C']" :key="lette" class="checkbox-wrapper">
-        <input type="checkbox" name="" id="" :value="lette" @click="changeChartData" :checked="agelabel === lette" />
-        <span>{{ lette }}</span>
+      <div class="headerDiv">
+        <h5 class="heading">Age Group:</h5>
+        <div v-for="lette in ['A', 'B', 'C', 'D']" :key="lette" class="checkbox-wrapper">
+          <input type="checkbox" name="" id="" :value="lette" @click="changeChartData" :checked="agelabel === lette" />
+          <span>{{ lette }}</span>
+        </div>
       </div>
     </div>
     <div class="chart-container">
       <div class="chart-wrapper">
         <Line v-if="!loading" :data="chartData" :options="chartOptions" />
         <div v-else class="loading-text">loading data...</div>
+      </div>
+    </div>
+    <!-- chat age group keys -->
+    <div class="age-group-cont">
+      <span class="key-text">Age Group Keys:</span>
+      <div class="age-group-keys">
+        <div class="age-group-text">A: Total Population</div>
+        <div class="age-group-text">B: Young Population</div>
+        <div class="age-group-text">C: Working Population</div>
+        <div class="age-group-text">D: Elderly Population</div>
       </div>
     </div>
   </div>
@@ -141,6 +157,8 @@ const changeChartData = (e: any) => {
         return 1;
       case 'C':
         return 2;
+      case 'D':
+        return 3;
       default:
         return 0;
     }
@@ -246,8 +264,14 @@ const addOrRemovePrefecture = (e: any) => {
   font-weight: 600;
 }
 
+.header>div {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .heading {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-align: center;
 }
@@ -272,7 +296,6 @@ const addOrRemovePrefecture = (e: any) => {
   display: flex;
   width: 100%;
   max-width: 800px;
-  min-width: 500px;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
@@ -283,9 +306,43 @@ const addOrRemovePrefecture = (e: any) => {
   text-align: center;
 }
 
+.age-group-cont {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.age-group-keys {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1em;
+  flex-wrap: wrap;
+}
+
+.age-group-keys>div {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+  align-items: center;
+}
+
+.age-group-text::first-letter {
+  color: #00f;
+}
+
+.key-text {
+  font-size: 0.8rem;
+  margin: 0.5em 1rem;
+}
+
 @media (max-width: 768px) {
   .header {
     flex-wrap: wrap;
   }
+
+  .chart-wrapper {
+    min-width: 500px;
+  }
+
 }
 </style>
