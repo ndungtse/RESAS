@@ -77,6 +77,9 @@ const chartOptions: any = {
         boxWidth: 5,
         boxHeight: 5,
       },
+      onClick: (e: any) => {
+        // console.log('e', e);
+      },
     },
     title: {
       display: true,
