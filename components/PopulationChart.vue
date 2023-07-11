@@ -180,6 +180,12 @@ const changeChartData = (e: any) => {
   chartData.value = fetchedData;
 };
 
+const getPrefIndex = (pref: string) => {
+  if (pref === 'Hokkaido') return 0;
+  if (pref === 'Aomori') return 1;
+  return 0;
+}
+
 // // log chartData when it is changed
 // watch(chartData, () => {
 //   console.log('new chartData', chartData.value);
@@ -207,13 +213,14 @@ watch(prefectures, () => {
     return
   }
   if (prefectures.value.length === 1) {
+    const index = getPrefIndex(prefectures.value[0]);
     const fetchedData = {
-      labels: allData.value[0].result.data[labelIndex()].data.map(d => d.year),
+      labels: allData.value[index].result.data[labelIndex()].data.map(d => d.year),
       datasets: [
         {
-          label: prefectures.value[0],
-          data: allData.value[0].result.data[labelIndex()].data.map(d => d.value),
-          borderColor: borderColor.value[0],
+          label: prefectures.value[index],
+          data: allData.value[index].result.data[labelIndex()].data.map(d => d.value),
+          borderColor: borderColor.value[index],
           fill: false,
           tension: 0.5,
           pointRadius: 1,
@@ -224,10 +231,11 @@ watch(prefectures, () => {
   } else if (prefectures.value.length === 2) {
     let datasets: any = [];
     for (let i = 0; i < prefectures.value.length; i++) {
+      const index = getPrefIndex(prefectures.value[i]);
       datasets.push({
-        label: prefectures.value[i],
-        data: allData.value[i].result.data[labelIndex()].data.map(d => d.value),
-        borderColor: borderColor.value[i],
+        label: prefectures.value[index],
+        data: allData.value[index].result.data[labelIndex()].data.map(d => d.value),
+        borderColor: borderColor.value[index],
         fill: false,
         tension: 0.5,
         pointRadius: 1,
