@@ -2,16 +2,13 @@
   <div class="container">
     <div class="header">
       <h5 class="heading">Prefecture:</h5>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" name="" id="" />
-        <span>Tokyo</span>
-      </div>
-      <div class="checkbox-wrapper">
-        <input type="checkbox" name="" id="" />
-        <span>Kanagawa</span>
+      <div v-for="pref in ['Hokkaido', 'Aomori']" :key="pref" class="checkbox-wrapper">
+        <input type="checkbox" name="" id="" :value="pref" @click="addOrRemovePrefecture"
+          :checked="prefectures.includes(pref)" />
+        <span>{{ pref }}</span>
       </div>
       <div v-for="lette in ['A', 'B', 'C']" :key="lette" class="checkbox-wrapper">
-        <input type="checkbox" name="" id="" />
+        <input type="checkbox" name="" id="" :value="lette" @click="changeChartData" :checked="agelabel === lette" />
         <span>{{ lette }}</span>
       </div>
     </div>
@@ -42,6 +39,11 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const chartData: any = useState('chartData', () => ({}));
 const loading: any = useState('loading', () => true);
+// agelabels A:総人口 B:年少人口 C:生産年齢人口 D:老年人口
+const agelabel = useState('agelabel', () => 'A');
+const prefectures = useState('prefecture', () => ['Hokkaido', 'Aomori']);
+const borderColor = useState('borderColor', () => ['#00fc00', '#00f']);
+const allData: globalThis.Ref<[ApiResponse, ApiResponse] | null> = useState('allData', () => (null));
 
 const chartOptions: any = {
   responsive: true,
@@ -96,14 +98,12 @@ const fetchData = async () => {
   ).then(res => res.json());
 
   const [data, data1]: [ApiResponse, ApiResponse] = await Promise.all([res, res1]);
-  console.log('res', data);
-  console.log('res1', data1);
-
+  allData.value = [data, data1];
   const fetchedData = {
     labels: data.result.data[0].data.map(d => d.year),
     datasets: [
       {
-        label: data.result.data[0].label,
+        label: 'Hokkaido',
         data: data.result.data[0].data.map(d => d.value),
         borderColor: '#00fc00',
         fill: false,
@@ -111,7 +111,7 @@ const fetchData = async () => {
         pointRadius: 1,
       },
       {
-        label: data1.result.data[0].label,
+        label: 'Aomori',
         data: data1.result.data[0].data.map(d => d.value),
         borderColor: '#00f',
         fill: false,
@@ -120,7 +120,6 @@ const fetchData = async () => {
       },
     ],
   };
-  console.log('fetchedData', fetchedData);
   chartData.value = fetchedData;
   loading.value = false;
 };
@@ -128,6 +127,106 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
+// change chart data when checkbox is clicked for age label from allData if it is not empty
+const changeChartData = (e: any) => {
+  console.log('e', e.target.value);
+  agelabel.value = e.target.value;
+  const labelIndex = () => {
+    switch (e.target.value) {
+      case 'A':
+        return 0;
+      case 'B':
+        return 1;
+      case 'C':
+        return 2;
+      default:
+        return 0;
+    }
+  };
+  if (!allData.value) return
+  if (prefectures.value.length === 0) return
+  console.log('prefectures', prefectures.value);
+
+  let datasets: any = [];
+  for (let i = 0; i < prefectures.value.length; i++) {
+    datasets.push({
+      label: prefectures.value[i],
+      data: allData.value[i].result.data[labelIndex()].data.map(d => d.value),
+      borderColor: borderColor.value[i],
+      fill: false,
+      tension: 0.5,
+      pointRadius: 1,
+    });
+  }
+  const fetchedData = {
+    labels: allData.value[0].result.data[labelIndex()].data.map(d => d.year),
+    datasets: datasets,
+  };
+  chartData.value = fetchedData;
+};
+
+// // log chartData when it is changed
+// watch(chartData, () => {
+//   console.log('new chartData', chartData.value);
+// });
+// change chart data when select is changed for prefectures from allData if it is not empty, show 2 prefectures  or 1 prefecture
+watch(prefectures, () => {
+  if (!allData.value) return
+  const labelIndex = () => {
+    switch (agelabel.value) {
+      case 'A':
+        return 0;
+      case 'B':
+        return 1;
+      case 'C':
+        return 2;
+      default:
+        return 0;
+    }
+  };
+  if (prefectures.value.length === 0) return
+  if (prefectures.value.length === 1) {
+    const fetchedData = {
+      labels: allData.value[0].result.data[labelIndex()].data.map(d => d.year),
+      datasets: [
+        {
+          label: prefectures.value[0],
+          data: allData.value[0].result.data[labelIndex()].data.map(d => d.value),
+          borderColor: borderColor.value[0],
+          fill: false,
+          tension: 0.5,
+          pointRadius: 1,
+        },
+      ],
+    };
+    chartData.value = fetchedData;
+  } else if (prefectures.value.length === 2) {
+    let datasets: any = [];
+    for (let i = 0; i < prefectures.value.length; i++) {
+      datasets.push({
+        label: prefectures.value[i],
+        data: allData.value[i].result.data[labelIndex()].data.map(d => d.value),
+        borderColor: borderColor.value[i],
+        fill: false,
+        tension: 0.5,
+        pointRadius: 1,
+      });
+    }
+    const fetchedData = {
+      labels: allData.value[0].result.data[labelIndex()].data.map(d => d.year),
+      datasets: datasets,
+    };
+    chartData.value = fetchedData;
+  }
+});
+
+const addOrRemovePrefecture = (e: any) => {
+  if (prefectures.value.includes(e.target.value)) {
+    prefectures.value = prefectures.value.filter(pref => pref !== e.target.value);
+  } else {
+    prefectures.value = [...prefectures.value, e.target.value];
+  }
+};
 </script>
 
 <style scoped>
