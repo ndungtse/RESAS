@@ -20,8 +20,9 @@
     </div>
     <div class="chart-container">
       <div class="chart-wrapper">
-        <Line v-if="!loading" :data="chartData" :options="chartOptions" />
-        <div v-else class="loading-text">loading data...</div>
+        <Line v-if="!loading && showGraph" :data="chartData" :options="chartOptions" />
+        <div v-if="loading" class="loading-text">loading data...</div>
+        <div v-if="!showGraph && !loading" class="loading-text">Select at least 1 Prefecture</div>
       </div>
     </div>
     <!-- chat age group keys -->
@@ -57,9 +58,10 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const chartData: any = useState('chartData', () => ({}));
 const loading: any = useState('loading', () => true);
+const showGraph: any = useState('showGraph', () => true);
 // agelabels A:総人口 B:年少人口 C:生産年齢人口 D:老年人口
 const agelabel = useState('agelabel', () => 'A');
-const prefectures = useState('prefecture', () => ['Hokkaido', 'Aomori']);
+const prefectures = useState('prefecture', () => ['Hokkaido']);
 const borderColor = useState('borderColor', () => ['#00fc00', '#00f']);
 const allData: globalThis.Ref<[ApiResponse, ApiResponse] | null> = useState('allData', () => (null));
 
@@ -124,14 +126,6 @@ const fetchData = async () => {
         label: 'Hokkaido',
         data: data.result.data[0].data.map(d => d.value),
         borderColor: '#00fc00',
-        fill: false,
-        tension: 0.5,
-        pointRadius: 1,
-      },
-      {
-        label: 'Aomori',
-        data: data1.result.data[0].data.map(d => d.value),
-        borderColor: '#00f',
         fill: false,
         tension: 0.5,
         pointRadius: 1,
@@ -204,7 +198,11 @@ watch(prefectures, () => {
         return 0;
     }
   };
-  if (prefectures.value.length === 0) return
+  if (prefectures.value.length === 0) {
+    showGraph.value = false;
+    chartData.value = null;
+    return
+  }
   if (prefectures.value.length === 1) {
     const fetchedData = {
       labels: allData.value[0].result.data[labelIndex()].data.map(d => d.year),
@@ -241,6 +239,7 @@ watch(prefectures, () => {
 });
 
 const addOrRemovePrefecture = (e: any) => {
+  showGraph.value = true;
   if (prefectures.value.includes(e.target.value)) {
     prefectures.value = prefectures.value.filter(pref => pref !== e.target.value);
   } else {
