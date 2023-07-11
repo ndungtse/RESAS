@@ -232,8 +232,9 @@ watch(prefectures, () => {
     let datasets: any = [];
     for (let i = 0; i < prefectures.value.length; i++) {
       const index = getPrefIndex(prefectures.value[i]);
+      // console.log('index', index, 'i', i);
       datasets.push({
-        label: prefectures.value[index],
+        label: prefectures.value[i],
         data: allData.value[index].result.data[labelIndex()].data.map(d => d.value),
         borderColor: borderColor.value[index],
         fill: false,
