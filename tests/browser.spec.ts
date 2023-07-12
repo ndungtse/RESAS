@@ -19,7 +19,6 @@ describe('My test', async () => {
                 data: [
                   { year: 2020, value: 100 },
                   { year: 2021, value: 200 },
-                  { year: 2022, value: 300 },
                 ],
               },
             ],
@@ -37,13 +36,15 @@ describe('My test', async () => {
     expect(fetchData).toBeDefined();
   });
   test('fetches and returns population data', async () => {
+    console.log('apiKey', process.env.NUXT_RESAS_API_KEY);
+
     const pref1 = { prefCode: 1, prefName: 'pref1' };
     const pref2 = { prefCode: 2, prefName: 'pref2' };
 
     const populationData = await fetchData(pref1, pref2);
 
     expect(populationData).toBeDefined(); // has data
-    expect(populationData).toHaveLength(3); // 3 datas form 2 prefectures data
+    expect(populationData).toHaveLength(2); // 2 datas form 2 prefectures data are returned
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     expect(fetchSpy).toHaveBeenCalledWith(

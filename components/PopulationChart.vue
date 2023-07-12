@@ -50,7 +50,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { ApiResponse, Prefecture } from 'utils/types';
+import { fetchData } from '@/utils/fetcher';
+import { ApiResponse, Prefecture } from '@/utils/types';
 import { Line } from 'vue-chartjs';
 
 const runtimeConfig = useRuntimeConfig();
@@ -101,26 +102,8 @@ const chartOptions: any = {
 };
 
 // fetch data from API RESAS and set to chartData
-const fetchData = async (pref1: Prefecture, pref2: Prefecture) => {
-  loading.value = true;
-  const res = await fetch(
-    `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${pref1.prefCode}`,
-    {
-      headers: {
-        'X-API-KEY': runtimeConfig.public.API_KEY,
-      },
-    },
-  ).then(res => res.json());
-  const res1 = await fetch(
-    `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${pref2.prefCode}`,
-    {
-      headers: {
-        'X-API-KEY': runtimeConfig.public.API_KEY,
-      },
-    },
-  ).then(res => res.json());
-
-  const [data, data1]: [ApiResponse, ApiResponse] = await Promise.all([res, res1]);
+const getData = async (pref1: Prefecture, pref2: Prefecture) => {
+  const [data, data1]: [ApiResponse, ApiResponse] = await fetchData(pref1, pref2, runtimeConfig.public.API_KEY);
   allData.value = [data, data1];
   const fetchedData = {
     labels: data.result.data[0].data.map(d => d.year),
@@ -154,7 +137,7 @@ onMounted(() => {
 // watch availablePrefectures 
 watch(availablePrefs, () => {
   if (availablePrefs.value.length > 0) {
-    fetchData(availablePrefs.value[0], availablePrefs.value[1]);
+    getData(availablePrefs.value[0], availablePrefs.value[1]);
     prefectures.value = [availablePrefs.value[0].prefName];
   }
 });
